@@ -24,7 +24,6 @@ class SynapseDB:
         self.server = server
         self.database = database
         self.driver = driver
-        self.connect_to_db()
 
     def connect_to_db(self):
         """
@@ -49,7 +48,7 @@ class SynapseDB:
         SQL_COPT_SS_ACCESS_TOKEN = 1256
         conn = pyodbc.connect(conn_string, attrs_before={
                               SQL_COPT_SS_ACCESS_TOKEN: tokenstruct})
-        self.conn = conn
+        return conn
 
     def count_rows(self, table_name) -> int:
         """
@@ -61,7 +60,8 @@ class SynapseDB:
         Returns:
             int: The number of rows in the table.
         """
-        cursor = self.conn.cursor()
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
         cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
         row_count = cursor.fetchone()[0]
         return row_count
